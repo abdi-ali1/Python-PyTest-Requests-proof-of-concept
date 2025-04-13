@@ -1,15 +1,3 @@
-# ⚙️ PyTest API Test Framework – Proof of Concept
-
-Deze PoC toont een simpele en uitbreidbare testopzet in Python met:
-
-- ✅ PyTest voor testuitvoering
-- ✅ Requests voor API-calls
-- ✅ PyTest-HTML voor rapportage
-- ✅ JSON-data als input (data-driven)
-
----
-
-## 🏗️ Structuur
 
 # 🧪 PyTest API Test Framework – Proof of Concept
 
@@ -62,3 +50,57 @@ Draai de tests en genereer een HTML-rapport:
 pytest tests/ --html=reports/report.html --self-contained-html
 ```
 📂 Open daarna reports/report.html in je browser.
+
+## 📥 Data-driven testing
+Testdata staat in data/endpoints.json. Voorbeeld:
+
+```json
+[
+  {
+    "endpoint": "https://jsonplaceholder.typicode.com/posts/1",
+    "expected_user_id": 1
+  }
+]
+
+```
+
+Elke testiteratie valideert:
+
+* ✅ Status code = 200
+* ✅ Content-Type is JSON
+* ✅ userId veld is correct
+
+
+## 🧪 CI/CD met GitHub Actions
+Deze workflow draait automatisch bij elke push of pull request naar main.
+
+📄 .github/workflows/pytest-api.yml:
+```yaml
+name: 🔍 Run PyTest API Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - run: pip install -r requirements.txt
+      - run: pytest tests/ --html=reports/report.html --self-contained-html
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pytest-report
+          path: reports/report.html
+```
+👀 Na elke run kun je het rapport downloaden via Artifacts in GitHub Actions.
+
+
+## 🧑‍💻 Auteur
+Naam: [vul in]
